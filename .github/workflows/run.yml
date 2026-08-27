@@ -1,22 +1,19 @@
-import os
-import requests
-
-token = os.environ.get("BOT_TOKEN")
-chat_id = os.environ.get("CHAT_ID")
-
-print(f"Token found: {bool(token)}")
-print(f"Chat ID: {chat_id}")
-
-url = f"https://api.telegram.org/bot{token}/sendMessage"
-data = {
-    "chat_id": chat_id,
-    "text": "✅ تم ربط البوت بنجاح يا ابو راكان! البوت شغال 100% من GitHub"
-}
-
-r = requests.post(url, data=data)
-print(f"Telegram response: {r.text}")
-
-if r.status_code == 200:
-    print("Message sent SUCCESS")
-else:
-    print("Failed to send")
+name: whale-bot
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - run: pip install requests
+      - run: python bot.py
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
